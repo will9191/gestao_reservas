@@ -68,24 +68,28 @@ namespace Reservation.Controllers
         {
             string reserve = GenerateUniqueIdentifier(address);
             try { 
-
+                return Ok(_service.BookReserve(address));
             }
-            catch { }
+            catch (Exception) { 
+                return StatusCode(500, "An unexpected error occurred");
+            }
         }
 
         private bool AddressInvalid(AddressModel address)
         {
             return string.IsNullOrEmpty(address.ZipCode) ||
-                   address.Number < 0;
+                   string.IsNullOrEmpty(address.Number);
         }
 
-        private string GenerateUniqueIdentifier(AddressModel address)
+        public string GenerateUniqueIdentifier(AddressModel address)
         {
+            string zipCodeFormatted = address.ZipCode.Trim().Replace("-", "");
+
             StringBuilder sb = new StringBuilder();
-            sb.Append(address?.ZipCode);
-            sb.Append(address?.Number.ToString());
+            sb.Append(zipCodeFormatted);
+            sb.Append(address?.Number);
             sb.Append(address?.Unit);
-            sb.Append(address?.UnitNumber.ToString());
+            sb.Append(address?.UnitNumber);
             string uniqueIdentifier = sb.ToString();
 
             return uniqueIdentifier;

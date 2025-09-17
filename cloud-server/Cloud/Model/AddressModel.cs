@@ -7,14 +7,14 @@ namespace Reservation.Model
         [JsonProperty("zip_code")]
         public string ZipCode { get; set; }
         [JsonProperty("number")]
-        public int Number { get; set; }
+        public string Number { get; set; }
         [JsonProperty("unit")]
         public string Unit { get; set; }
         [JsonProperty("unit_number")]
-        public int UnitNumber { get; set; }
+        public string UnitNumber { get; set; }
 
         public AddressModel() { 
-            ZipCode = Unit  = string.Empty;
+            ZipCode = Number = Unit = UnitNumber = string.Empty;
         }
     }
 }
