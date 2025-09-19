@@ -1,35 +1,75 @@
-﻿using Reservation.Model;
-using Reservation.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using Reserve.Model;
+using Reserve.Data;
+using Reserve.Entity;
 
-namespace Reservation.Services
+namespace Reserve.Services
 {
-    public class ReserveService
+    public class ReserveService(AppDbContext _context)
     {
-        private ReserveRepository _repository;
-
-        public ReserveService(ReserveRepository repository)
+        public async Task<ReserveResponse> NewReserve(ReserveRequest reserve)
         {
-            _repository = repository;
+            var result = await _context.Reserves
+                .FirstOrDefaultAsync<ReserveEntity>(r => r.UniqueIdentifier == reserve.UniqueIdentifier);
+
+            var response = new ReserveResponse();
+            response.UniqueIdentifier = reserve.UniqueIdentifier;
+
+            if (result == null)
+            {
+                var newReserve = new ReserveEntity
+                {
+                    UniqueIdentifier = reserve.UniqueIdentifier,
+                    IsAvailable = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _context.AddAsync(newReserve);
+                await _context.SaveChangesAsync();
+
+                response.IsAvailable = true;
+            } else
+            {
+                response.IsAvailable = result.IsAvailable;
+                response.Message = response.IsAvailable ? "Reserve is available." : "Reserve is not available.";
+            }
+
+            return response;
         }
 
-        public string NewReserve(ReserveModel reserve)
+        public async Task<ReserveResponse> GetReserveStatus(ReserveRequest reserve)
         {
-            return _repository.NewReserve(reserve);
-        }
-
-        public string GetReserveStatus(AddressModel address)
-        {
-            var result = _repository.GetReserveStatus(address);
+            var result = await _context.Reserves
+                .FirstOrDefaultAsync<ReserveEntity>(r => r.UniqueIdentifier == reserve.UniqueIdentifier);
             
             if (result == null)
-                throw new KeyNotFoundException("No reservation found for the provided address.");
+                throw new KeyNotFoundException("No reserve found for the provided identifier.");
 
-            return result;
+            return new ReserveResponse
+            {
+                Message = result.IsAvailable ? "Reserve is available." : "Reserve is not available.",
+                UniqueIdentifier = result.UniqueIdentifier,
+                IsAvailable = result.IsAvailable
+            };
         }
 
-        public string BookReserve(AddressModel address)
+        public async Task<Response> BookReserve(string uniqueIdentifier)
         {
-            return _repository.BookReserve(address);
+            var reserve = await _context.Reserves.FirstOrDefaultAsync<ReserveEntity>(r => r.UniqueIdentifier == uniqueIdentifier);
+
+            if (reserve == null)
+            {
+                throw new KeyNotFoundException("No reserve found for the provided identifier.");
+            }
+
+            reserve.IsAvailable = true ? reserve.IsAvailable = false : throw new InvalidOperationException("Reserve is already booked.");
+            _context.Reserves.Update(reserve);
+            await _context.SaveChangesAsync();
+            return new Response
+            {
+                Message = "Successfully reserved"
+            };
+
         }
     }
 }
