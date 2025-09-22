@@ -10,6 +10,12 @@ namespace Reserve.Controllers
     {
         private readonly ReserveService _service = service;
 
+        [HttpGet("health")]
+        public async Task<ActionResult> HealthCheck()
+        {
+            return Ok("Reserve Service is running.");
+        }
+
         [HttpPost("new-reserve")]
         public async Task<ActionResult> NewReserve(ReserveRequest reserve)
         {
@@ -23,15 +29,15 @@ namespace Reserve.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(ex.Message);
+                return Conflict(new Response { Message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new Response { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+                return StatusCode(500, new Response { Message = $"An unexpected error occurred: {ex.Message}" });
             }
         }
 
@@ -45,11 +51,11 @@ namespace Reserve.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new Response { Message = ex.Message });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new Response { Message = ex.Message });
             }
         }
 
@@ -61,14 +67,14 @@ namespace Reserve.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new Response { Message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(ex.Message);
+                return Conflict(new Response { Message = ex.Message });
             }
-            catch (Exception) {
-                return StatusCode(500, "An unexpected error occurred");
+            catch (Exception ex) {
+                return StatusCode(500, new Response { Message = $"An unexpected error occurred: {ex.Message}" });
             }
         }
     }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reserve", "Reserve.csproj", "{D972E642-AE6A-4456-B4E6-40A000245ADB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reserve", "Reserve\Reserve.csproj", "{D972E642-AE6A-4456-B4E6-40A000245ADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReserveTest", "..\ReserveTest\ReserveTest.csproj", "{AB70BAA0-2B9A-42AF-A136-A2C0DA2824C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReserveTest", "ReserveTest\ReserveTest.csproj", "{AB70BAA0-2B9A-42AF-A136-A2C0DA2824C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
