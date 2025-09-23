@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/ee0a0591-fade-45fd-9d07-693181bcec16/resourceGroups/ReserveBrazil/providers/Microsoft.Web/sites/Reserve20250922234151",
+  "appService.deploySubpath": "."
+}
