@@ -43,7 +43,7 @@ router.post("/api/reserve/status", (req, res) => __awaiter(void 0, void 0, void 
         }
         // chamada para nuvem
         const response = yield axios_1.default.post("https://nuvem.com/api/reserve/status", { id_key });
-        // supondo que a nuvem responde { status: "available" } ou { status: "non-existent" }
+        // supondo que a nuvem responde { is_available: true } ou { is_available: false }
         const { status } = response.data;
         return res.json({ status });
     }

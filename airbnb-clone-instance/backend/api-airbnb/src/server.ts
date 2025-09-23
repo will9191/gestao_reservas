@@ -2,10 +2,12 @@ import swaggerUi from "swagger-ui-express";
 import express, { Request, Response } from "express";
 import vagasRouter from "./routes/vagas_local/vagas";
 import swaggerJSDoc from "swagger-jsdoc";
-import nuvemRouter from "./routes/vagas_nuvem/reserve"; 
+import nuvemRouter from "./routes/vagas_nuvem/reserve";
+import cors from "cors";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 const swaggerOptions = {

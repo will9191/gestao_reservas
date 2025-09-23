@@ -8,7 +8,9 @@ const express_1 = __importDefault(require("express"));
 const vagas_1 = __importDefault(require("./routes/vagas_local/vagas"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const reserve_1 = __importDefault(require("./routes/vagas_nuvem/reserve"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 const swaggerOptions = {
     definition: {
@@ -16,7 +18,7 @@ const swaggerOptions = {
         info: {
             title: "Airbnb - API",
             version: "1.0.0",
-            description: "API desenvolvida para ilustrar a plataforma Airbnb",
+            description: "API desenvolvida para ilustrar a plataforma Booking",
         },
     },
     apis: ["dist/routes/**/*.js"], // pega todos os arquivos de rotas
@@ -30,9 +32,9 @@ app.use("/", vagas_1.default);
 app.get("/", (req, res) => {
     res.send("API Rodando");
 });
-app.listen(3000, () => {
-    console.log("Servidor rodando em http://localhost:3000");
-    console.log("Documentação em http://localhost:3000/api-docs");
+app.listen(3001, () => {
+    console.log("Servidor rodando em http://localhost:3001");
+    console.log("Documentação em http://localhost:3001/api-docs");
 });
 exports.default = app;
 //# sourceMappingURL=server.js.map

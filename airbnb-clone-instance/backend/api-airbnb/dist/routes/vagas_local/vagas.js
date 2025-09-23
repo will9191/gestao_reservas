@@ -84,9 +84,11 @@ router.get("/vagas/vagas-cadastradas-local", (req, res) => __awaiter(void 0, voi
 router.post("/vagas/cadastro-local", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, address, image } = req.body;
-        const { country, city, neighborhood, street, zip_code, number, unit, unit_number } = address || {};
+        const { country, city, neighborhood, street, zip_code, number, unit, unit_number, } = address || {};
         if (!name || !address) {
-            return res.status(400).json({ message: "Nome e Endereço são obrigatórios!" });
+            return res
+                .status(400)
+                .json({ message: "Nome e Endereço são obrigatórios!" });
         }
         const id_key = `${zip_code}${number}${unit}${unit_number}`;
         // valida com a nuvem se a vaga está disponível
@@ -98,8 +100,23 @@ router.post("/vagas/cadastro-local", (req, res) => __awaiter(void 0, void 0, voi
         // insere no banco local
         yield database_1.default.query(`INSERT INTO vagas 
         (id_key, name, country, city, neighborhood, street, zip_code, number, unit, unit_number, image, is_reserved) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [id_key, name, country, city, neighborhood, street, zip_code, number, unit, unit_number, image, false]);
-        return res.status(201).json({ message: "Vaga criada com sucesso!", id_key });
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+            id_key,
+            name,
+            country,
+            city,
+            neighborhood,
+            street,
+            zip_code,
+            number,
+            unit,
+            unit_number,
+            image,
+            false,
+        ]);
+        return res
+            .status(201)
+            .json({ message: "Vaga criada com sucesso!", id_key });
     }
     catch (error) {
         console.error("Erro ao cadastrar vaga: ", error);
@@ -123,7 +140,7 @@ router.post("/vagas/cadastro-local", (req, res) => __awaiter(void 0, void 0, voi
  *               id_key:
  *                 type: string
  *               status:
- *                 type: string
+ *                 type: boolean
  *     responses:
  *       200:
  *         description: Status atualizado com sucesso
@@ -131,12 +148,28 @@ router.post("/vagas/cadastro-local", (req, res) => __awaiter(void 0, void 0, voi
 router.post("/vagas/update-status", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { status, id_key } = req.body;
-        if (!status || !id_key) {
-            return res.status(400).json({ message: "Status e id_key são obrigatórios!" });
+        if (status === undefined || !id_key) {
+            return res
+                .status(400)
+                .json({ message: "Status (boolean) e id_key são obrigatórios!" });
         }
-        const is_reserved = status === "available" ? false : true;
-        yield database_1.default.query("UPDATE vagas SET is_reserved = ? WHERE id_key = ?", [is_reserved, id_key]);
-        res.json({ message: "Status atualizado com sucesso!" });
+        const is_reserved = Boolean(status);
+        // sincroniza com a nuvem
+        const response = yield axios_1.default.patch("https://nuvem.com/api/reserve/book-reserve", { id_key });
+        if (response.status !== 200) {
+            return res
+                .status(400)
+                .json({ message: "Não foi possível atualizar o status na nuvem!" });
+        }
+        const { reserve_booked } = response.data;
+        yield database_1.default.query("UPDATE vagas SET is_reserved = ? WHERE id_key = ?", [
+            is_reserved,
+            id_key,
+        ]);
+        return res.json({
+            message: "Status atualizado com sucesso!",
+            reserve_booked,
+        });
     }
     catch (error) {
         console.error("Erro ao atualizar status: ", error);

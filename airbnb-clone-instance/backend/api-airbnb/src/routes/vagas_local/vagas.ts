@@ -8,22 +8,25 @@ const router = Router();
  * @swagger
  * /vagas/vagas-cadastradas-local:
  *   get:
- *     summary: Exibir lista de vagas 
+ *     summary: Exibir lista de vagas
  *     tags:
  *       - Vagas-Local
  *     responses:
- *       200: 
+ *       200:
  *         description: Exibe as vagas cadastradas
  */
-router.get("/vagas/vagas-cadastradas-local", async (req: Request, res: Response) => {
-  try {
-    const [vagas_cadastradas]: any = await pool.query("SELECT * FROM vagas");
-    res.json({ vagas_cadastradas });
-  } catch (error) {
-    console.error("Erro ao consultar tabela de vagas: ", error);
-    res.status(500).json({ error: "Erro ao consultar tabela de vagas!" });
+router.get(
+  "/vagas/vagas-cadastradas-local",
+  async (req: Request, res: Response) => {
+    try {
+      const [vagas_cadastradas]: any = await pool.query("SELECT * FROM vagas");
+      res.json({ vagas_cadastradas });
+    } catch (error) {
+      console.error("Erro ao consultar tabela de vagas: ", error);
+      res.status(500).json({ error: "Erro ao consultar tabela de vagas!" });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -53,16 +56,16 @@ router.get("/vagas/vagas-cadastradas-local", async (req: Request, res: Response)
  *                     type: string
  *                   street:
  *                     type: string
- *                   zip_code: 
+ *                   zip_code:
  *                     type: string
  *                   number:
  *                     type: string
  *                   unit:
  *                     type: string
- *                   unit_number: 
+ *                   unit_number:
  *                     type: string
  *               image:
- *                 type: string    
+ *                 type: string
  *     responses:
  *       201:
  *         description: Vaga criada com sucesso!
@@ -72,16 +75,30 @@ router.get("/vagas/vagas-cadastradas-local", async (req: Request, res: Response)
 router.post("/vagas/cadastro-local", async (req: Request, res: Response) => {
   try {
     const { name, address, image } = req.body;
-    const { country, city, neighborhood, street, zip_code, number, unit, unit_number } = address || {};
+    const {
+      country,
+      city,
+      neighborhood,
+      street,
+      zip_code,
+      number,
+      unit,
+      unit_number,
+    } = address || {};
 
     if (!name || !address) {
-      return res.status(400).json({ message: "Nome e Endereço são obrigatórios!" });
+      return res
+        .status(400)
+        .json({ message: "Nome e Endereço são obrigatórios!" });
     }
 
     const id_key = `${zip_code}${number}${unit}${unit_number}`;
 
     // valida com a nuvem se a vaga está disponível
-    const response = await axios.post("https://nuvem.com/api/reserve/new-reserve", { id_key });
+    const response = await axios.post(
+      "https://nuvem.com/api/reserve/new-reserve",
+      { id_key }
+    );
     const { is_available } = response.data;
 
     if (!is_available) {
@@ -93,10 +110,25 @@ router.post("/vagas/cadastro-local", async (req: Request, res: Response) => {
       `INSERT INTO vagas 
         (id_key, name, country, city, neighborhood, street, zip_code, number, unit, unit_number, image, is_reserved) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id_key, name, country, city, neighborhood, street, zip_code, number, unit, unit_number, image, false]
+      [
+        id_key,
+        name,
+        country,
+        city,
+        neighborhood,
+        street,
+        zip_code,
+        number,
+        unit,
+        unit_number,
+        image,
+        false,
+      ]
     );
 
-    return res.status(201).json({ message: "Vaga criada com sucesso!", id_key });
+    return res
+      .status(201)
+      .json({ message: "Vaga criada com sucesso!", id_key });
   } catch (error) {
     console.error("Erro ao cadastrar vaga: ", error);
     return res.status(500).json({ message: "Erro ao cadastrar vaga" });
@@ -120,23 +152,45 @@ router.post("/vagas/cadastro-local", async (req: Request, res: Response) => {
  *               id_key:
  *                 type: string
  *               status:
- *                 type: string
+ *                 type: boolean
  *     responses:
- *       200: 
+ *       200:
  *         description: Status atualizado com sucesso
  */
 router.post("/vagas/update-status", async (req: Request, res: Response) => {
   try {
     const { status, id_key } = req.body;
-    if (!status || !id_key) {
-      return res.status(400).json({ message: "Status e id_key são obrigatórios!" });
+    if (status === undefined || !id_key) {
+      return res
+        .status(400)
+        .json({ message: "Status (boolean) e id_key são obrigatórios!" });
     }
 
-    const is_reserved = status === true ? false : true;
+    const is_reserved = Boolean(status);
 
-    await pool.query("UPDATE vagas SET is_reserved = ? WHERE id_key = ?", [is_reserved, id_key]);
+    // sincroniza com a nuvem
+    const response = await axios.patch(
+      "https://nuvem.com/api/reserve/book-reserve",
+      { id_key }
+    );
 
-    res.json({ message: "Status atualizado com sucesso!" });
+    if (response.status !== 200) {
+      return res
+        .status(400)
+        .json({ message: "Não foi possível atualizar o status na nuvem!" });
+    }
+
+    const { reserve_booked } = response.data;
+
+    await pool.query("UPDATE vagas SET is_reserved = ? WHERE id_key = ?", [
+      is_reserved,
+      id_key,
+    ]);
+
+    return res.json({
+      message: "Status atualizado com sucesso!",
+      reserve_booked,
+    });
   } catch (error) {
     console.error("Erro ao atualizar status: ", error);
     res.status(500).json({ error: "Erro ao atualizar status" });

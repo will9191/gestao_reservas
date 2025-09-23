@@ -8,11 +8,11 @@ body {
 }
 
 @theme {
-  --color-booking: #5c7ffd;
-  --color-booking-200: #4c63e7;
-  --color-booking-300: #2f61b7db;
+  --color-airbnb: #fd5c63;
+  --color-airbnb-200: #e74c56;
+  --color-airbnb-300: #b72f38db;
 
-  --color-light-booking: #79afff;
+  --color-light-airbnb: #ff7980;
 }
 
 button:hover {
