@@ -11,7 +11,7 @@ namespace Reserve.Controllers
         private readonly ReserveService _service = service;
 
         [HttpGet("health")]
-        public async Task<ActionResult> HealthCheck()
+        public ActionResult HealthCheck()
         {
             return Ok("Reserve Service is running.");
         }
