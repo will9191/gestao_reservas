@@ -19,7 +19,7 @@ namespace Reserve.Controllers
         [HttpPost("new-reserve")]
         public async Task<ActionResult> NewReserve(ReserveRequest reserve)
         {
-            if (reserve == null)
+            if (reserve.UniqueIdentifier == null)
                 return BadRequest("Fill all the required fields");
 
             try
@@ -41,12 +41,14 @@ namespace Reserve.Controllers
             }
         }
 
-        [HttpGet("status")]
-        public async Task<ActionResult> GetReserveStatus(ReserveRequest request)
+        [HttpGet("status/{uniqueIdentifier}")]
+        public async Task<ActionResult> GetReserveStatus(string uniqueIdentifier)
         {
+            if (string.IsNullOrWhiteSpace(uniqueIdentifier))
+                return BadRequest("UniqueIdentifier cannot be null or empty.");
             try
             {
-                var result = await _service.GetReserveStatus(request);
+                var result = await _service.GetReserveStatus(uniqueIdentifier);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex)

@@ -37,11 +37,11 @@ namespace Reserve.Services
             return response;
         }
 
-        public async Task<ReserveResponse> GetReserveStatus(ReserveRequest reserve)
+        public async Task<ReserveResponse> GetReserveStatus(string uniqueIdentifier)
         {
             var result = await _context.Reserves
-                .FirstOrDefaultAsync<ReserveEntity>(r => r.UniqueIdentifier == reserve.UniqueIdentifier);
-            
+                .FirstOrDefaultAsync<ReserveEntity>(r => r.UniqueIdentifier == uniqueIdentifier);
+
             if (result == null)
                 throw new KeyNotFoundException("No reserve found for the provided identifier.");
 
@@ -62,14 +62,13 @@ namespace Reserve.Services
                 throw new KeyNotFoundException("No reserve found for the provided identifier.");
             }
 
-            reserve.IsAvailable = true ? reserve.IsAvailable = false : throw new InvalidOperationException("Reserve is already booked.");
+            reserve.IsAvailable = reserve.IsAvailable ? false : throw new InvalidOperationException("Reserve is already booked.");
             _context.Reserves.Update(reserve);
             await _context.SaveChangesAsync();
             return new Response
             {
                 Message = "Successfully reserved"
             };
-
         }
     }
 }

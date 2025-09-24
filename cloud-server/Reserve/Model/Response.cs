@@ -1,10 +1,7 @@
-﻿using Newtonsoft.Json;
-
-namespace Reserve.Model
+﻿namespace Reserve.Model
 {
     public class Response
     {
-        [JsonProperty("message")]
         public string Message { get; set; } = string.Empty;
     }
 }
