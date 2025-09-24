@@ -29,14 +29,16 @@ router.post("/api/reserve/status", async (req: Request, res: Response) => {
     if (!id_key) {
       return res.status(400).json({ error: "id_key é obrigatório" });
     }
-
-    const unique_identifier = id_key;
+    const uniqueIdentifier = id_key;
     // chamada para nuvem
-    const response = await axios.post(`${process.env.URL_NUVEM}/api/reserve/status`, { unique_identifier });
+    const response = await axios.post(
+      `${process.env.URL_NUVEM}/api/reserve/status`,
+      { uniqueIdentifier }
+    );
 
-    const { is_reserved } = response.data;
+    const { isReserved } = response.data;
 
-    return res.json({ is_reserved });
+    return res.json({ isReserved });
   } catch (error) {
     console.error("Erro ao consultar API da nuvem:", error);
     return res.status(500).json({ error: "Erro ao consultar status na nuvem" });
