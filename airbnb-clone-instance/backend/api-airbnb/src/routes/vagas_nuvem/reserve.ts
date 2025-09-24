@@ -31,12 +31,12 @@ router.post("/api/reserve/status", async (req: Request, res: Response) => {
     }
 
     // chamada para nuvem
-    const response = await axios.post("https://nuvem.com/api/reserve/status", { id_key });
+    const response = await axios.post(`${process.env.URL_NUVEM}/api/reserve/status`, { id_key });
 
     // supondo que a nuvem responde { status: "available" } ou { status: "non-existent" }
-    const { status } = response.data;
+    const { is_reserved } = response.data;
 
-    return res.json({ status });
+    return res.json({ is_reserved });
   } catch (error) {
     console.error("Erro ao consultar API da nuvem:", error);
     return res.status(500).json({ error: "Erro ao consultar status na nuvem" });

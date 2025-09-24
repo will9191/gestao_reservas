@@ -96,7 +96,7 @@ router.post("/vagas/cadastro-local", async (req: Request, res: Response) => {
 
     // valida com a nuvem se a vaga está disponível
     const response = await axios.post(
-      "https://nuvem.com/api/reserve/new-reserve",
+      `${process.env.URL_NUVEM}/api/reserve/new-reserve`,
       { id_key }
     );
     const { is_available } = response.data;
@@ -170,7 +170,7 @@ router.post("/vagas/update-status", async (req: Request, res: Response) => {
 
     // sincroniza com a nuvem
     const response = await axios.patch(
-      "https://nuvem.com/api/reserve/book-reserve",
+      `${process.env.URL_NUVEM}/api/reserve/book-reserve`,
       { id_key }
     );
 
