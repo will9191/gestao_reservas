@@ -93,11 +93,11 @@ router.post("/vagas/cadastro-local", async (req: Request, res: Response) => {
     }
 
     const id_key = `${zip_code}${number}${unit}${unit_number}`;
+    const unique_identifier = id_key;
 
     // valida com a nuvem se a vaga está disponível
     const response = await axios.post(
-      `${process.env.URL_NUVEM}/api/reserve/new-reserve`,
-      { id_key }
+      `${process.env.URL_NUVEM}/api/reserve/new-reserve`, { unique_identifier }
     );
     const { is_available } = response.data;
 
@@ -167,11 +167,10 @@ router.post("/vagas/update-status", async (req: Request, res: Response) => {
     }
 
     const is_reserved = Boolean(status);
-
+    const unique_identifier = id_key;
     // sincroniza com a nuvem
     const response = await axios.patch(
-      `${process.env.URL_NUVEM}/api/reserve/book-reserve`, 
-      { id_key }
+      `${process.env.URL_NUVEM}/api/reserve/book-reserve/${unique_identifier}`
     );
 
     if (response.status !== 200) {

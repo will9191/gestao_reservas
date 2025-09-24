@@ -29,11 +29,10 @@ router.post("/api/reserve/status", async (req: Request, res: Response) => {
     if (!id_key) {
       return res.status(400).json({ error: "id_key é obrigatório" });
     }
-
+    const unique_identifier = id_key;
     // chamada para nuvem
-    const response = await axios.post(`${process.env.URL_NUVEM}/api/reserve/status`, { id_key });
+    const response = await axios.post(`${process.env.URL_NUVEM}/api/reserve/status`, { unique_identifier });
 
-    // supondo que a nuvem responde { status: "available" } ou { status: "non-existent" }
     const { is_reserved } = response.data;
 
     return res.json({ is_reserved });
