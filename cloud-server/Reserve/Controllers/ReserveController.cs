@@ -59,7 +59,7 @@ namespace Reserve.Controllers
             }
         }
 
-        [HttpPatch("book-reserve/:uniqueIdentifier")]
+        [HttpPatch("book-reserve/{uniqueIdentifier}")]
         public async Task<ActionResult> BookReserve(string uniqueIdentifier) 
         {
             try {
