@@ -2,7 +2,6 @@ import swaggerUi from "swagger-ui-express";
 import express, { Request, Response } from "express";
 import vagasRouter from "./routes/vagas_local/vagas";
 import swaggerJSDoc from "swagger-jsdoc";
-import nuvemRouter from "./routes/vagas_nuvem/reserve";
 import cors from "cors";
 
 require("dotenv").config();
@@ -27,9 +26,6 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// rotas da nuvem
-app.use("/nuvem", nuvemRouter);
 
 // rotas locais (banco local)
 app.use("/", vagasRouter);
