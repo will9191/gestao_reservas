@@ -12,7 +12,7 @@ export function Card({ data, setShouldRefetch, setModalInfo }: CardProps) {
     console.log(`Booking slot: ${data.name}`);
     const response: Response = await postReserveBookingSlot(data.id_key);
     if (!response.ok) {
-      console.error("Failed to book slot:", response.statusText);
+      console.error("Failed to book slot:", response);
       setModalInfo({ title: "A vaga não pôde ser reservada." });
     } else {
       setModalInfo({ title: "Vaga reservada com sucesso." });

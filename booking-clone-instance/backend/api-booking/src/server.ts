@@ -5,6 +5,8 @@ import swaggerJSDoc from "swagger-jsdoc";
 import nuvemRouter from "./routes/vagas_nuvem/reserve";
 import cors from "cors";
 
+require("dotenv").config();
+
 const app = express();
 
 app.use(cors());

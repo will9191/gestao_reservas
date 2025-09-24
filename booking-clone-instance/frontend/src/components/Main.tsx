@@ -7,10 +7,13 @@ const fetchBookingSlots = async (
   setBookingSlots: Dispatch<SetStateAction<BookingSlotResponse[]>>
 ): Promise<void> => {
   console.log("Fetching booking slots...");
-  const response: any = await getBookingSlots();
-  console.log("response: ", response);
-
-  setBookingSlots(response.vagas_cadastradas);
+  const data = await getBookingSlots();
+  console.log("Response received:", data);
+  if (data && data.vagas_cadastradas) {
+    setBookingSlots(data.vagas_cadastradas as BookingSlotResponse[]);
+  } else {
+    setBookingSlots([]);
+  }
 };
 
 export const Main = () => {
@@ -41,7 +44,7 @@ export const Main = () => {
       <div className="flex flex-col justify-start items-start m-4">
         <h1 className="text-2xl font-bold">Em Destaque</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-3">
-          {bookingSlots?.map((slot) => (
+          {bookingSlots.map((slot) => (
             <Card
               key={slot.id}
               data={slot}

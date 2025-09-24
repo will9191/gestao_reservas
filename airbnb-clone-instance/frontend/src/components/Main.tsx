@@ -7,14 +7,13 @@ const fetchBookingSlots = async (
   setBookingSlots: Dispatch<SetStateAction<BookingSlotResponse[]>>
 ): Promise<void> => {
   console.log("Fetching booking slots...");
-  const response: Response = await getBookingSlots();
-  if (!response.ok) {
-    console.error("Failed to fetch booking slots:", response.statusText);
-    return;
+  const data = await getBookingSlots();
+  console.log("Response received:", data);
+  if (data && data.vagas_cadastradas) {
+    setBookingSlots(data.vagas_cadastradas as BookingSlotResponse[]);
+  } else {
+    setBookingSlots([]);
   }
-  setBookingSlots(
-    await response.json().then((data: unknown) => data as BookingSlotResponse[])
-  );
 };
 
 export const Main = () => {

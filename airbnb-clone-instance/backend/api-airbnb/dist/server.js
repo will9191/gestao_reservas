@@ -9,6 +9,7 @@ const vagas_1 = __importDefault(require("./routes/vagas_local/vagas"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const reserve_1 = __importDefault(require("./routes/vagas_nuvem/reserve"));
 const cors_1 = __importDefault(require("cors"));
+require("dotenv").config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());

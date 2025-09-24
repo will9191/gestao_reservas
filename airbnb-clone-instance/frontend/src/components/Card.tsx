@@ -11,9 +11,10 @@ export function Card({ data, setShouldRefetch, setModalInfo }: CardProps) {
   const handleReserve = async () => {
     console.log(`Booking slot: ${data.name}`);
     const response: Response = await postReserveBookingSlot(data.id_key);
+    console.log("Response from booking attempt:", response);
     if (!response.ok) {
       console.error("Failed to book slot:", response.statusText);
-      setModalInfo({ title: "A vaga não pôde ser reservada." });
+      setModalInfo({ title: "Essa vaga já foi reservada." });
     } else {
       setModalInfo({ title: "Vaga reservada com sucesso." });
     }

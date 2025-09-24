@@ -1,12 +1,25 @@
-import { API_BASE_URL, BookingSlotStatus } from "./types";
+import { API_BASE_URL } from "./types";
 
 export const getBookingSlots = async () => {
-  return await fetch(`${API_BASE_URL}/vagas/vagas-cadastradas-local`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  // First, get the raw response from the server
+  const response = await fetch(
+    `${API_BASE_URL}/vagas/vagas-cadastradas-local`,
+    {
+      method: "GET",
+      // Note: 'Content-Type' header is not needed for a GET request
+    }
+  );
+
+  // Check if the request was successful
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  // Second, parse the JSON body from the response
+  const data = await response.json();
+
+  // Finally, return the parsed data
+  return data;
 };
 
 export const postReserveBookingSlot = async (id_key: string) => {
@@ -17,7 +30,6 @@ export const postReserveBookingSlot = async (id_key: string) => {
     },
     body: JSON.stringify({
       id_key,
-      status: BookingSlotStatus.RESERVED,
     }),
   });
 };

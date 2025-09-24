@@ -1,9 +1,9 @@
-import { API_BASE_URL, BookingSlotStatus } from "./types";
+import { API_BASE_URL } from "./types";
 
 export const getBookingSlots = async () => {
   // First, get the raw response from the server
   const response = await fetch(
-    `http://localhost:3001/vagas/vagas-cadastradas-local`,
+    `${API_BASE_URL}/vagas/vagas-cadastradas-local`,
     {
       method: "GET",
       // Note: 'Content-Type' header is not needed for a GET request
